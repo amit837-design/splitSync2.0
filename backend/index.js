@@ -2,7 +2,7 @@ require("dotenv").config();
 const connectDB = require("./src/db/db");
 const app = require("./src/app");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 process.on("uncaughtException", (err) => {
   console.error("UNCAUGHT EXCEPTION!:", err.message);
