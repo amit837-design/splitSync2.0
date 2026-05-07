@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 
 // Fallback if .env fails (Optional, but good for debugging)
-const BASE_URL = API_URL || "https://split-sync-backend.onrender.com";
+const BASE_URL = API_URL || "https://split-sync2-0-waa4.vercel.app/";
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -30,7 +30,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // 2. Response Interceptor (Handle 401/Logout)
@@ -44,7 +44,7 @@ api.interceptors.response.use(
       // UI navigation to login is handled by the AppNavigator observing the token
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
