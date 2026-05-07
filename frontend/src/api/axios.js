@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://split-sync2-0-waa4.vercel.app/",
+  baseURL: "https://splitsync2-0.onrender.com",
   withCredentials: true,
 });
 
