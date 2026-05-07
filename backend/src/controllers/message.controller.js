@@ -1,8 +1,10 @@
 const Message = require("../models/message.model");
 const Chat = require("../models/chat.model");
 const User = require("../models/auth.model");
+const connectDB = require("../db/db");
 
 const fetchMessages = async (req, res) => {
+  await connectDB();
   try {
     const { chatId } = req.params;
 
@@ -13,7 +15,7 @@ const fetchMessages = async (req, res) => {
     }
 
     const isMember = chat.users.some(
-      (userId) => userId.toString() === req.user._id.toString()
+      (userId) => userId.toString() === req.user._id.toString(),
     );
 
     if (!isMember) {
@@ -36,6 +38,7 @@ const fetchMessages = async (req, res) => {
 };
 
 const sendMessage = async (req, res) => {
+  await connectDB();
   try {
     const { content, chatId, type, poolId } = req.body;
 

@@ -3,8 +3,10 @@ const Pool = require("../models/pools.model");
 const Message = require("../models/message.model");
 const Chat = require("../models/chat.model");
 const User = require("../models/auth.model");
+const connectDB = require("../db/db");
 
 async function createPool(req, res) {
+  await connectDB();
   try {
     const {
       title,
@@ -54,7 +56,7 @@ async function createPool(req, res) {
       try {
         const privateChat = await findOrCreatePrivateChat(
           creatorId,
-          borrowerId
+          borrowerId,
         );
         if (privateChat) {
           const msg = await Message.create({
@@ -111,6 +113,7 @@ async function createPool(req, res) {
 }
 
 async function updatePoolStatus(req, res) {
+  await connectDB();
   try {
     const { poolId, action } = req.body;
     const userId = req.user._id.toString();
@@ -190,6 +193,7 @@ async function updatePoolStatus(req, res) {
 }
 
 async function getDashboardData(req, res) {
+  await connectDB();
   try {
     const userId = req.user._id;
 
@@ -249,6 +253,7 @@ async function getDashboardData(req, res) {
 }
 
 async function getFriendBalance(req, res) {
+  await connectDB();
   try {
     const myId = req.user._id;
     const friendId = req.params.friendId;
@@ -299,6 +304,7 @@ async function getFriendBalance(req, res) {
 }
 
 async function findOrCreatePrivateChat(userId1, userId2) {
+  await connectDB();
   let isChat = await Chat.find({
     isGroupChat: false,
     $and: [
@@ -309,7 +315,7 @@ async function findOrCreatePrivateChat(userId1, userId2) {
 
   if (userId1.toString() === userId2.toString()) {
     isChat = isChat.filter(
-      (chat) => !chat.users.some((u) => u.toString() !== userId1.toString())
+      (chat) => !chat.users.some((u) => u.toString() !== userId1.toString()),
     );
   }
 

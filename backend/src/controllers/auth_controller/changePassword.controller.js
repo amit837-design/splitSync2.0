@@ -1,6 +1,8 @@
 const User = require("../../models/auth.model");
+const connectDB = require("../../db/db");
 const bcrypt = require("bcrypt");
 const changePassword = async (req, res) => {
+  await connectDB();
   try {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user._id;

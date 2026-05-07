@@ -1,5 +1,6 @@
 const User = require("../../models/auth.model");
 const ImageKit = require("imagekit");
+const connectDB = require("../../db/db");
 
 // Initialize ImageKit
 const imagekit = new ImageKit({
@@ -9,6 +10,7 @@ const imagekit = new ImageKit({
 });
 
 const updateProfile = async (req, res) => {
+  await connectDB();
   try {
     const userId = req.user.id; // From authMiddleware
     const { name } = req.body;

@@ -2,8 +2,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../../utils/sendEmail");
 const User = require("../../models/auth.model");
+const connectDB = require("../../db/db");
 
 async function requestPasswordReset(req, res) {
+  await connectDB();
   try {
     let { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
@@ -46,6 +48,7 @@ async function requestPasswordReset(req, res) {
 }
 
 async function verifyOTP(req, res) {
+  await connectDB();
   try {
     let { email, otp } = req.body;
     if (!email || !otp)
@@ -80,6 +83,7 @@ async function verifyOTP(req, res) {
 }
 
 async function resetPassword(req, res) {
+  await connectDB();
   try {
     const { resetToken, newPassword } = req.body;
 

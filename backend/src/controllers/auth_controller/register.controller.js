@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const User = require("../../models/auth.model");
 const sendEmail = require("../../utils/sendEmail");
+const connectDB = require("../../db/db");
 
 // Utility: Generate 6 digit string
 function generateOTP() {
@@ -10,6 +11,7 @@ function generateOTP() {
 }
 
 async function registerUser(req, res) {
+  await connectDB();
   try {
     let { name, email, password } = req.body;
 
@@ -60,6 +62,7 @@ async function registerUser(req, res) {
 }
 
 async function verifyEmailOTP(req, res) {
+  await connectDB();
   try {
     let { email, otp } = req.body;
     email = email.trim().toLowerCase();
@@ -114,6 +117,7 @@ async function verifyEmailOTP(req, res) {
 }
 
 async function resendOTP(req, res) {
+  await connectDB();
   try {
     let { email } = req.body;
     email = email.trim().toLowerCase();
