@@ -13,7 +13,9 @@ async function requestPasswordReset(req, res) {
 
     // Security: Do not reveal if user exists
     if (!user) {
-      return res.status(200).json({ message: "If the email exists, an OTP has been sent" });
+      return res
+        .status(200)
+        .json({ message: "If the email exists, an OTP has been sent" });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -23,13 +25,20 @@ async function requestPasswordReset(req, res) {
     user.emailOTPExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    await sendEmail(
-      email,
-      "Reset Your Password",
-      `Your password reset code is ${otp}. It expires in 10 minutes.`
-    );
+    try {
+      await sendEmail(
+        email,
+        "Reset Your Password",
+        `Your password reset code is ${otp}. It expires in 10 minutes.`,
+      );
+    } catch (emailErr) {
+      console.error("Email sending failed:", emailErr.message);
+      // Don't re-throw — let the request complete successfully
+    }
 
-    res.status(200).json({ message: "If the email exists, an OTP has been sent" });
+    res
+      .status(200)
+      .json({ message: "If the email exists, an OTP has been sent" });
   } catch (err) {
     console.error("Forgot Password Error:", err);
     res.status(500).json({ message: "Server error" });
@@ -39,7 +48,8 @@ async function requestPasswordReset(req, res) {
 async function verifyOTP(req, res) {
   try {
     let { email, otp } = req.body;
-    if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
+    if (!email || !otp)
+      return res.status(400).json({ message: "Email and OTP are required" });
 
     email = email.trim().toLowerCase();
     const user = await User.findOne({ email });
@@ -58,7 +68,9 @@ async function verifyOTP(req, res) {
     }
 
     // Create 10-minute reset token
-    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "10m" });
+    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "10m",
+    });
 
     res.status(200).json({ message: "OTP verified", resetToken });
   } catch (err) {
@@ -72,14 +84,18 @@ async function resetPassword(req, res) {
     const { resetToken, newPassword } = req.body;
 
     if (!resetToken || !newPassword) {
-      return res.status(400).json({ message: "Reset token and new password are required" });
+      return res
+        .status(400)
+        .json({ message: "Reset token and new password are required" });
     }
 
     let decoded;
     try {
       decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
     } catch (e) {
-      return res.status(401).json({ message: "Invalid or expired reset token" });
+      return res
+        .status(401)
+        .json({ message: "Invalid or expired reset token" });
     }
 
     const user = await User.findById(decoded.id);

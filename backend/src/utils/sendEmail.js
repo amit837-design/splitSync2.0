@@ -1,30 +1,15 @@
-const nodemailer = require("nodemailer");
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
-
-transporter.verify((err, success) => {
-  if (err) console.log("SMTP ERROR:", err.message);
-  else console.log("SMTP READY");
-});
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (to, subject, text) => {
-  return transporter.sendMail({
-    from: `"SplitSync" <${process.env.EMAIL_USER}>`,
+  const { data, error } = await resend.emails.send({
+    from: "SplitSync <onboarding@resend.dev>",
     to,
     subject,
     text,
   });
+  if (error) throw new Error(error.message);
+  return data;
 };
 
 module.exports = sendEmail;
